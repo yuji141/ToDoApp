@@ -16,13 +16,13 @@ function addTodo() {
     checkbox.type = 'checkbox';
     checkbox.addEventListener('change', () => {
       if (checkbox.checked) {
-        li.styletextDecoration = 'line-through'; //完了：取り消し線
+        li.style.textDecoration = 'line-through'; //完了：取り消し線
       } else {
-        li.styletextDecoration = '';//未完了：もとに戻す
+        li.style.textDecoration = '';//未完了：もとに戻す
       }
     });
     //テキスト
-    const span = document.createElement('span')；
+    const span = document.createElement('span');
     span.textContent = text;
     
     //削除ボタンを作成
