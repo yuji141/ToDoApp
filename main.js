@@ -42,6 +42,7 @@ function addTodo() {
     input.value = '';
   }
   
+
   //追加ボタンで追加
   addBtn.addEventListener('click', addTodo);
 
