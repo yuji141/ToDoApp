@@ -22,7 +22,7 @@ function addTodo() {
         li.style.textDecoration = '';//未完了：もとに戻す
         li.style.color = 'black'; //文字色を元に戻す
       }
-      
+      updateTaskCount(); //タスク数を更新
     });
     //テキスト
     const span = document.createElement('span');
@@ -33,6 +33,7 @@ function addTodo() {
     delBtn.textContent = '削除';
     delBtn.addEventListener('click', () => {
       li.remove();
+      updateTaskCount(); //タスク数を更新
     });
   
     //liに要素をまとめる
@@ -43,8 +44,21 @@ function addTodo() {
   
     //入力欄を空にする
     input.value = '';
+
+    //タスク数を更新
+    updateTaskCount();
   }
   
+  //タスク数を更新する関数
+  function updateTaskCount() {
+    const items = todoList.querySelectorAll('li');
+    let count = 0;
+    items.forEach(li => {
+      const checkbox = li.querySelector('input[type="checkbox"]');
+      if (!checkbox.checked) count++; //未完了のタスクをカウント
+    });
+    document.querySelector('#taskCount').textContent = count;
+  }
 
   //追加ボタンで追加
   addBtn.addEventListener('click', addTodo);
