@@ -16,13 +16,14 @@ function addTodo() {
     //チェックボックスを作成
     const checkbox = document.createElement('input');
     checkbox.type = 'checkbox';
+
     checkbox.addEventListener('change', () => {
       if (checkbox.checked) {
-        li.style.textDecoration = 'line-through'; //完了：取り消し線
-        li.style.color = 'gray'; //文字色を薄く
+        li.classList.add('done'); //完了：doneクラスを追加
+        doneList.appendChild(li); //完了リストに移動
       } else {
-        li.style.textDecoration = '';//未完了：もとに戻す
-        li.style.color = 'black'; //文字色を元に戻す
+        li.classList.remove('done'); //未完了：doneクラスを削除
+        todoList.appendChild(li); //未完了リストに移動
       }
       updateTaskCount(); //タスク数を更新
     });
@@ -33,6 +34,7 @@ function addTodo() {
     //削除ボタンを作成
     const delBtn = document.createElement('button');
     delBtn.textContent = '削除';
+
     delBtn.addEventListener('click', () => {
       li.remove();
       updateTaskCount(); //タスク数を更新
@@ -53,20 +55,15 @@ function addTodo() {
   
   //タスク数を更新する関数
   function updateTaskCount() {
-    const items = todoList.querySelectorAll('li');
-    let count = 0;
-    items.forEach(li => {
-      const checkbox = li.querySelector('input[type="checkbox"]');
-      if (!checkbox.checked) count++; //未完了のタスクをカウント
-    });
-    document.querySelector('#taskCount').textContent = count;
+    const todos = todoList.querySelectorAll('li');
+    taskCount.textContent = todos.length;
   }
 
   //追加ボタンで追加
   addBtn.addEventListener('click', addTodo);
 
   //Enterキーで追加
-  input.addEventListener('keydown', (e) => {
+  input.addEventListener('keydown', e => {
     if (e.key === 'Enter') {
       addTodo();
     }
