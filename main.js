@@ -2,6 +2,8 @@ document.addEventListener('DOMContentLoaded', () => {
 const input = document.querySelector('#todoInput');
 const addBtn = document.querySelector('#addBtn');
 const todoList = document.querySelector('#todoList');
+const doneList = document.querySelector('#doneList');
+const taskCount = document.querySelector('#taskCount');
 
 //Todoを追加する関数
 function addTodo() {  
