@@ -4,6 +4,7 @@ const addBtn = document.querySelector('#addBtn');
 const todoList = document.querySelector('#todoList');
 const doneList = document.querySelector('#doneList');
 const taskCount = document.querySelector('#taskCount');
+const cleardoneBtn = document.querySelector('#clearDoneBtn');
 
 //Todoを追加する関数
 function addTodo() {  
@@ -53,11 +54,14 @@ function addTodo() {
     updateTaskCount();
   }
   
-  //タスク数を更新する関数
   function updateTaskCount() {
-    const todos = todoList.querySelectorAll('li');
-    taskCount.textContent = todos.length;
-  }
+  const todos = todoList.querySelectorAll('li');
+  taskCount.textContent = todos.length; // todoList に残っている li の数をそのまま表示
+}
+  
+  cleardoneBtn.addEventListener('click', () => {
+      doneList.innerHTML = ''; //完了リストをクリア
+    });
 
   //追加ボタンで追加
   addBtn.addEventListener('click', addTodo);
@@ -69,3 +73,4 @@ function addTodo() {
     }
   });
 });
+
