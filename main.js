@@ -4,7 +4,7 @@ const addBtn = document.querySelector('#addBtn');
 const todoList = document.querySelector('#todoList');
 const doneList = document.querySelector('#doneList');
 const taskCount = document.querySelector('#taskCount');
-const cleardoneBtn = document.querySelector('#clearDoneBtn');
+const clearDoneBtn = document.querySelector('#clearDoneBtn');
 
 //Todoを追加する関数
 function addTodo() {  
@@ -17,17 +17,7 @@ function addTodo() {
     //チェックボックスを作成
     const checkbox = document.createElement('input');
     checkbox.type = 'checkbox';
-
-    checkbox.addEventListener('change', () => {
-      if (checkbox.checked) {
-        li.classList.add('done'); //完了：doneクラスを追加
-        doneList.appendChild(li); //完了リストに移動
-      } else {
-        li.classList.remove('done'); //未完了：doneクラスを削除
-        todoList.appendChild(li); //未完了リストに移動
-      }
-      updateTaskCount(); //タスク数を更新
-    });
+    
     //テキスト
     const span = document.createElement('span');
     span.textContent = text;
@@ -36,8 +26,37 @@ function addTodo() {
     const delBtn = document.createElement('button');
     delBtn.textContent = '削除';
 
+    //戻すボタンを作成
+    const backBtn = document.createElement('button');
+    backBtn.textContent = '戻す';
+    backBtn.style.display = 'none'; //初期状態では非表示(完了次第表示)
+
+    //チェックボックスのイベント
+    checkbox.addEventListener('change', () => {
+      if (checkbox.checked) {
+        li.classList.add('done'); //完了：doneクラスを追加
+        doneList.appendChild(li); //完了リストに移動
+        backBtn.style.display = 'inline'; //戻すボタンを表示
+      } else {
+        li.classList.remove('done'); //未完了：doneクラスを削除
+        todoList.appendChild(li); //未完了リストに移動
+        backBtn.style.display = 'none'; //戻すボタンを非表示
+      }
+      updateTaskCount(); //タスク数を更新
+    });
+    
+    //削除ボタンのイベント
     delBtn.addEventListener('click', () => {
       li.remove();
+      updateTaskCount(); //タスク数を更新
+    });
+
+    //戻すボタンのイベント
+    backBtn.addEventListener('click', () => {
+      checkbox.checked = false; //チェックを外す
+      li.classList.remove('done'); //doneクラスを削除
+      todoList.appendChild(li); //未完了リストに移動
+      backBtn.style.display = 'none'; //戻すボタンを非表示
       updateTaskCount(); //タスク数を更新
     });
   
@@ -45,6 +64,7 @@ function addTodo() {
     li.appendChild(checkbox);
     li.appendChild(span);
     li.appendChild(delBtn);
+    li.appendChild(backBtn);
     todoList.appendChild(li);
   
     //入力欄を空にする
@@ -54,12 +74,13 @@ function addTodo() {
     updateTaskCount();
   }
   
+//タスク数を更新する関数
   function updateTaskCount() {
   const todos = todoList.querySelectorAll('li');
   taskCount.textContent = todos.length; // todoList に残っている li の数をそのまま表示
 }
-  
-  cleardoneBtn.addEventListener('click', () => {
+  //完了リストをクリアする関数
+  clearDoneBtn.addEventListener('click', () => {
       doneList.innerHTML = ''; //完了リストをクリア
     });
 
