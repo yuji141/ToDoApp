@@ -10,3 +10,7 @@ ul {
 li {
   margin-left: 10px;
 }
+li.done span {
+  color: gray;
+  text-decoration: line-through;
+}
