@@ -1,10 +1,15 @@
 document.addEventListener('DOMContentLoaded', () => {
+  loadTodos();
+  renderTodos();
+  updateTaskCount();
 const input = document.querySelector('#todoInput');
 const addBtn = document.querySelector('#addBtn');
 const todoList = document.querySelector('#todoList');
 const doneList = document.querySelector('#doneList');
 const taskCount = document.querySelector('#taskCount');
 const clearDoneBtn = document.querySelector('#clearDoneBtn');
+
+
 
 //Todoを追加する関数
 function addTodo() {  
@@ -69,6 +74,9 @@ function addTodo() {
   
     //入力欄を空にする
     input.value = '';
+    renderTodos();
+    updateTaskCount();
+    saveTodos();
 
     //タスク数を更新
     updateTaskCount();
@@ -94,4 +102,18 @@ function addTodo() {
     }
   });
 });
+
+//ローカルストレージに保存する関数
+function saveTodos() {
+  localStorage.setItem('todos', JSON.stringify(todos));
+}
+
+function loadTodos() {
+  const saved = localStorage.getItem('todos');
+  if (saved) {
+    todos = JSON.parse(saved);
+  }else{
+    todos = [];
+  }
+}
 
