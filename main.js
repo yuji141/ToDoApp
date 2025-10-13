@@ -16,11 +16,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const text = input.value.trim();
     if (text === '') return; //空文字は無視
 
-    const newTodo = { text: text, done: false };
-    todos.push(newTodo);
+    todos.push({ text: text, done: false });
     saveTodos();
     renderTodos();
     input.value = '';
+    updateTaskCount();
 
     //li要素を作成
     const li = document.createElement('li');
@@ -76,7 +76,7 @@ document.addEventListener('DOMContentLoaded', () => {
     li.appendChild(span);
     li.appendChild(delBtn);
     li.appendChild(backBtn);
-    todoList.appendChild(li);
+    //todoList.appendChild(li);
 
     //入力欄を空にする
     input.value = '';
@@ -95,7 +95,11 @@ document.addEventListener('DOMContentLoaded', () => {
   }
   //完了リストをクリアする関数
   clearDoneBtn.addEventListener('click', () => {
-    doneList.innerHTML = ''; //完了リストをクリア
+    //完了リストを空にする
+    todos = todos.filter((todo) => !todo.done);
+    saveTodos(); //ローカルストレージに保存
+    renderTodos(); //リストを再描画
+    updateTaskCount(); //タスク数を更新
   });
 
   //追加ボタンで追加
