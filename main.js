@@ -32,6 +32,11 @@ document.addEventListener('DOMContentLoaded', () => {
     //テキスト
     const span = document.createElement('span');
     span.textContent = text;
+    
+    //編集ボタン作成
+    const editBtn =document.createElement('button');
+    editBtn.textContent = '編集';
+    editBtn.addEventListener('click', () => editTodo(index));
 
     //削除ボタンを作成
     const delBtn = document.createElement('button');
@@ -171,3 +176,5 @@ document.addEventListener('DOMContentLoaded', () => {
     updateTaskCount();
   }
 });
+
+//編集用ボタン関数
