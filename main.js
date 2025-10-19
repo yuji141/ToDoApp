@@ -33,20 +33,16 @@ document.addEventListener('DOMContentLoaded', () => {
     const span = document.createElement('span');
     span.textContent = text;
     
-    //編集ボタン作成
-    const editBtn =document.createElement('button');
-    editBtn.textContent = '編集';
-    editBtn.addEventListener('click', () => editTodo(index));
-
+    
     //削除ボタンを作成
     const delBtn = document.createElement('button');
     delBtn.textContent = '削除';
-
+    
     //戻すボタンを作成
     const backBtn = document.createElement('button');
     backBtn.textContent = '戻す';
     backBtn.style.display = 'none'; //初期状態では非表示(完了次第表示)
-
+    
     //チェックボックスのイベント
     checkbox.addEventListener('change', () => {
       if (checkbox.checked) {
@@ -60,13 +56,13 @@ document.addEventListener('DOMContentLoaded', () => {
       }
       updateTaskCount(); //タスク数を更新
     });
-
+    
     //削除ボタンのイベント
     delBtn.addEventListener('click', () => {
       li.remove();
       updateTaskCount(); //タスク数を更新
     });
-
+    
     //戻すボタンのイベント
     backBtn.addEventListener('click', () => {
       checkbox.checked = false; //チェックを外す
@@ -75,24 +71,24 @@ document.addEventListener('DOMContentLoaded', () => {
       backBtn.style.display = 'none'; //戻すボタンを非表示
       updateTaskCount(); //タスク数を更新
     });
-
+    
     //liに要素をまとめる
     li.appendChild(checkbox);
     li.appendChild(span);
     li.appendChild(delBtn);
     li.appendChild(backBtn);
     //todoList.appendChild(li);
-
+    
     //入力欄を空にする
     input.value = '';
     renderTodos();
     updateTaskCount();
     saveTodos();
-
+    
     //タスク数を更新
     updateTaskCount();
   }
-
+  
   //タスク数を更新する関数
   function updateTaskCount() {
     const todos = todoList.querySelectorAll('li');
@@ -106,22 +102,22 @@ document.addEventListener('DOMContentLoaded', () => {
     renderTodos(); //リストを再描画
     updateTaskCount(); //タスク数を更新
   });
-
+  
   //追加ボタンで追加
   addBtn.addEventListener('click', addTodo);
-
+  
   //Enterキーで追加
   input.addEventListener('keydown', (e) => {
     if (e.key === 'Enter') {
       addTodo();
     }
   });
-
+  
   //ローカルストレージに保存する関数
   function saveTodos() {
     localStorage.setItem('todos', JSON.stringify(todos));
   }
-
+  
   function loadTodos() {
     const saved = localStorage.getItem('todos');
     if (saved) {
@@ -130,23 +126,27 @@ document.addEventListener('DOMContentLoaded', () => {
       todos = [];
     }
   }
-
+  
   function renderTodos() {
     todoList.innerHTML = '';
     doneList.innerHTML = '';
     todos.forEach((todo, index) => {
       const li = document.createElement('li');
-
+      
       const checkbox = document.createElement('input');
       checkbox.type = 'checkbox';
       checkbox.checked = todo.done;
-
+      
       const span = document.createElement('span');
       span.textContent = todo.text;
-
+      
       const delBtn = document.createElement('button');
       delBtn.textContent = '削除';
-
+      //編集ボタン作成
+      const editBtn =document.createElement('button');
+      editBtn.textContent = '編集';
+      editBtn.addEventListener('click', () => editTodo(index));
+      
       //削除イベント
       delBtn.addEventListener('click', () => {
         todos.splice(index, 1);
@@ -178,3 +178,32 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 //編集用ボタン関数
+function editTodo(index) {
+  const li = todoList.children[index];
+  const todo = todos[index];
+  
+  //テキスト入力欄に切り替え
+  const input = document.createElement('input');
+  input.type = 'text';
+  input.value = todo.text;
+  
+  //保存ボタンを作成
+  const saveBtn = document.createElement('button');
+  saveBtn.textContent = '保存';
+  
+  //保存ボタンのイベント
+  saveBtn.addEventListener('click', () => {
+    const newText = input.value.trim();
+    if (newText === '') { return;
+      
+      todos[index].text = newText;
+      saveTodos();
+      renderTodos();
+    }
+  });
+  
+  //liの内容を置き換え
+  li.innerHTML = '';
+  li.appendChild(input);
+  li.appendChild(saveBtn);
+}
