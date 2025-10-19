@@ -22,71 +22,6 @@ document.addEventListener('DOMContentLoaded', () => {
     input.value = '';
     updateTaskCount();
 
-    //li要素を作成
-    const li = document.createElement('li');
-
-    //チェックボックスを作成
-    const checkbox = document.createElement('input');
-    checkbox.type = 'checkbox';
-
-    //テキスト
-    const span = document.createElement('span');
-    span.textContent = text;
-    
-    
-    //削除ボタンを作成
-    const delBtn = document.createElement('button');
-    delBtn.textContent = '削除';
-    
-    //戻すボタンを作成
-    const backBtn = document.createElement('button');
-    backBtn.textContent = '戻す';
-    backBtn.style.display = 'none'; //初期状態では非表示(完了次第表示)
-    
-    //チェックボックスのイベント
-    checkbox.addEventListener('change', () => {
-      if (checkbox.checked) {
-        li.classList.add('done'); //完了：doneクラスを追加
-        doneList.appendChild(li); //完了リストに移動
-        backBtn.style.display = 'inline'; //戻すボタンを表示
-      } else {
-        li.classList.remove('done'); //未完了：doneクラスを削除
-        todoList.appendChild(li); //未完了リストに移動
-        backBtn.style.display = 'none'; //戻すボタンを非表示
-      }
-      updateTaskCount(); //タスク数を更新
-    });
-    
-    //削除ボタンのイベント
-    delBtn.addEventListener('click', () => {
-      li.remove();
-      updateTaskCount(); //タスク数を更新
-    });
-    
-    //戻すボタンのイベント
-    backBtn.addEventListener('click', () => {
-      checkbox.checked = false; //チェックを外す
-      li.classList.remove('done'); //doneクラスを削除
-      todoList.appendChild(li); //未完了リストに移動
-      backBtn.style.display = 'none'; //戻すボタンを非表示
-      updateTaskCount(); //タスク数を更新
-    });
-    
-    //liに要素をまとめる
-    li.appendChild(checkbox);
-    li.appendChild(span);
-    li.appendChild(delBtn);
-    li.appendChild(backBtn);
-    //todoList.appendChild(li);
-    
-    //入力欄を空にする
-    input.value = '';
-    renderTodos();
-    updateTaskCount();
-    saveTodos();
-    
-    //タスク数を更新
-    updateTaskCount();
   }
   
   //タスク数を更新する関数
@@ -154,7 +89,7 @@ document.addEventListener('DOMContentLoaded', () => {
         renderTodos();
         updateTaskCount();
       });
-
+      
       //チェックイベント
       checkbox.addEventListener('change', () => {
         todo.done = checkbox.checked;
@@ -162,11 +97,11 @@ document.addEventListener('DOMContentLoaded', () => {
         renderTodos();
         updateTaskCount();
       });
-
+      
       li.appendChild(checkbox);
       li.appendChild(span);
       li.appendChild(delBtn);
-
+      
       if (todo.done) {
         doneList.appendChild(li);
       } else {
