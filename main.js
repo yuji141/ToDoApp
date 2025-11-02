@@ -1,6 +1,4 @@
-// main.js（完成版：配列をソースにして renderTodo一本化 + 編集機能）
-
-let todos = []; // グローバルに保持してもよい（初期ロードで上書き）
+let todos = []; // ToDo アイテムの配列
 
 document.addEventListener('DOMContentLoaded', () => {
   // --- 要素取得 ---
@@ -15,7 +13,7 @@ document.addEventListener('DOMContentLoaded', () => {
   function saveTodos() {
     localStorage.setItem('todos', JSON.stringify(todos));
   }
-
+  //
   function loadTodos() {
     const saved = localStorage.getItem('todos');
     todos = saved ? JSON.parse(saved) : [];
@@ -31,20 +29,23 @@ document.addEventListener('DOMContentLoaded', () => {
   function enterEditMode(index) {
     // li を dataset で特定する（renderTodos で設定済み）
     const li = document.querySelector(`li[data-index='${index}']`);
-    if (!li) return;
+    if (!li) return; // li が null のときの安全策
     const todo = todos[index];
 
+    //編集用の入力欄作成
     const inputEl = document.createElement('input');
     inputEl.type = 'text';
     inputEl.value = todo.text;
 
+    // 保存ボタン作成
     const saveBtn = document.createElement('button');
     saveBtn.textContent = '保存';
 
+    // キャンセルボタン作成
     const cancelBtn = document.createElement('button');
     cancelBtn.textContent = 'キャンセル';
     
-    
+    // 保存処理
     saveBtn.addEventListener('click', () => {
       const newText = inputEl.value.trim();
       if (newText === '') return;
@@ -53,24 +54,27 @@ document.addEventListener('DOMContentLoaded', () => {
       renderTodos();
       }
     );
-    
+
+    // Enter キーで保存
     inputEl.addEventListener('keydown', (e) => {
       if (e.key === 'Enter') {
         save();
       }
     });
-    
+
+    // Escape キーで編集をキャンセル
     inputEl.addEventListener('keydown', (e) => {
       if (e.key === 'Escape') {
         renderTodos(); // 元に戻す
       }
     });
 
+    // キャンセル処理
     cancelBtn.addEventListener('click', () => {
       renderTodos(); // 元に戻す
     });
 
-    li.innerHTML = '';
+    li.innerHTML = '';// 一旦クリア
     li.appendChild(inputEl);
     li.appendChild(saveBtn);
     li.appendChild(cancelBtn);
@@ -82,9 +86,10 @@ document.addEventListener('DOMContentLoaded', () => {
     todoList.innerHTML = '';
     doneList.innerHTML = '';
 
+    // todos 配列を元に描画
     todos.forEach((todo, index) => {
       const li = document.createElement('li');
-      li.dataset.index = index; // これで index で一意に特定できる
+      li.dataset.index = index; // index で一意に特定
 
       // checkbox
       const checkbox = document.createElement('input');
@@ -109,7 +114,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const delBtn = document.createElement('button');
       delBtn.textContent = '削除';
       delBtn.addEventListener('click', () => {
-        todos.splice(index, 1);
+        todos.splice(index, 1);// 配列から削除
         saveTodos();
         renderTodos();
       });
@@ -139,7 +144,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // --- 完了タスク一括削除 ---
   function clearDone() {
-    todos = todos.filter(t => !t.done);
+    todos = todos.filter(t => !t.done);// done が false のものだけ残す
     saveTodos();
     renderTodos();
   }
