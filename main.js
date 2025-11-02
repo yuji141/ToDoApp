@@ -78,7 +78,7 @@ document.addEventListener('DOMContentLoaded', () => {
     li.appendChild(inputEl);
     li.appendChild(saveBtn);
     li.appendChild(cancelBtn);
-    inputEl.focus();
+    inputEl.focus();// 入力欄にフォーカス
   }
 
   // --- 描画（todos -> DOM） ---
