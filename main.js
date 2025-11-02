@@ -44,17 +44,15 @@ document.addEventListener('DOMContentLoaded', () => {
     const cancelBtn = document.createElement('button');
     cancelBtn.textContent = 'キャンセル';
     
-    function save() {
-    const newText = inputEl.value.trim();
-    if (newText === '') return;
-    todos[index].text = newText;
-    saveTodos();
-    renderTodos();
-    }
     
-    saveBtn.addEventListener('click', save);
-    
-    saveBtn.addEventListener('click', save);
+    saveBtn.addEventListener('click', () => {
+      const newText = inputEl.value.trim();
+      if (newText === '') return;
+      todos[index].text = newText;
+      saveTodos();
+      renderTodos();
+      }
+    );
     
     inputEl.addEventListener('keydown', (e) => {
       if (e.key === 'Enter') {
@@ -62,6 +60,12 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
     
+    inputEl.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        renderTodos(); // 元に戻す
+      }
+    });
+
     cancelBtn.addEventListener('click', () => {
       renderTodos(); // 元に戻す
     });
