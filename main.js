@@ -58,7 +58,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Enter キーで保存
     inputEl.addEventListener('keydown', (e) => {
       if (e.key === 'Enter') {
-        save();
+        saveBtn.click();
       }
     });
 
