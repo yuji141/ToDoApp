@@ -119,17 +119,42 @@ document.addEventListener('DOMContentLoaded', () => {
         renderTodos();
       });
 
+      // move up button
+      const upBtn = document.createElement('button');
+      upBtn.textContent = '↑';
+      upBtn.addEventListener('click', () => 
+        moveTodo(index, -1)); // 上へ移動
+
+      // move down button
+      const downBtn = document.createElement('button');
+      downBtn.textContent = '↓';
+      downBtn.addEventListener('click', () => 
+        moveTodo(index, 1)); // 下へ移動
+
       // assemble
       li.appendChild(checkbox);
       li.appendChild(span);
       li.appendChild(editBtn);
       li.appendChild(delBtn);
+      li.appendChild(upBtn);
+      li.appendChild(downBtn);
 
       if (todo.done) doneList.appendChild(li);
       else todoList.appendChild(li);
     });
 
     updateTaskCount();
+  }
+
+  // --- タスク移動 ---
+  function moveTodo(index, direction) {
+    const newIndex = index + direction;
+    if (newIndex < 0 || newIndex >= todos.length) return; // 範囲外チェック
+    // 配列内で要素を入れ替え
+    const [moveTodo] = todos.splice(index, 1);
+    todos.splice(newIndex, 0, moveTodo);
+    saveTodos();
+    renderTodos();
   }
 
   // --- タスク追加 ---
