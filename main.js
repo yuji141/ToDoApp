@@ -89,7 +89,12 @@ document.addEventListener('DOMContentLoaded', () => {
     // todos 配列を元に描画
     todos.forEach((todo, index) => {
       const li = document.createElement('li');
+      li.setAttribute('draggable', true);
       li.dataset.index = index; // index で一意に特定
+      
+      li.addEventListener('dragstart', handleDragStart);
+      li.addEventListener('dragover', handleDragOver);
+      li.addEventListener('drop', handleDrop);
 
       // checkbox
       const checkbox = document.createElement('input');
@@ -144,6 +149,35 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     updateTaskCount();
+  }
+  
+  let draggedIndex = null;
+  
+  //ドラッグ開始時
+  function handlerDragStart(e) {
+    draggedIndex = e.target.dataset.index;
+    e.dataTransfer.effectAllowed = 'move';
+  }
+  
+  //ドラッグ中(上に重ねたとき)
+  function handlerDragOver(e) {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
+  }
+  
+  //ドロップ時
+  function handlerDrop(e) {
+    e.preventDefault();
+    const targetIndex = e.target.closet('li').dataset.index;
+    
+    if(draggedIndex === null || targetIndex === undefined) return;
+    
+    //配列の順番を入れ替える
+    const [movedItem] = todos.splice(draggedIndex, 1);
+    todos.splice(targetIndex, 0, movedItem);
+    
+    saveTodo();
+    renderTodos();
   }
 
   // --- タスク移動 ---
