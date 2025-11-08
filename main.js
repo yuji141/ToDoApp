@@ -9,11 +9,11 @@ document.addEventListener('DOMContentLoaded', () => {
   const taskCount = document.querySelector('#taskCount');
   const clearDoneBtn = document.querySelector('#clearDoneBtn');
 
-  // --- 保存／読み込み ---
+  // --- 保存 ---
   function saveTodos() {
     localStorage.setItem('todos', JSON.stringify(todos));
   }
-  //
+  //--- 読み込み ---
   function loadTodos() {
     const saved = localStorage.getItem('todos');
     todos = saved ? JSON.parse(saved) : [];
@@ -150,25 +150,25 @@ document.addEventListener('DOMContentLoaded', () => {
 
     updateTaskCount();
   }
-  
+
   let draggedIndex = null;
   
-  //ドラッグ開始時
-  function handlerDragStart(e) {
+  // --- ドラッグ開始時 ---
+  function handleDragStart(e) {
     draggedIndex = e.target.dataset.index;
     e.dataTransfer.effectAllowed = 'move';
   }
   
-  //ドラッグ中(上に重ねたとき)
-  function handlerDragOver(e) {
+  // --- ドラッグ中(上に重ねたとき) ---
+  function handleDragOver(e) {
     e.preventDefault();
     e.dataTransfer.dropEffect = 'move';
   }
   
-  //ドロップ時
-  function handlerDrop(e) {
+  //--- ドロップ時 ---
+  function handleDrop(e) {
     e.preventDefault();
-    const targetIndex = e.target.closet('li').dataset.index;
+    const targetIndex = e.target.closest('li').dataset.index;
     
     if(draggedIndex === null || targetIndex === undefined) return;
     
@@ -176,14 +176,14 @@ document.addEventListener('DOMContentLoaded', () => {
     const [movedItem] = todos.splice(draggedIndex, 1);
     todos.splice(targetIndex, 0, movedItem);
     
-    saveTodo();
+    saveTodos();
     renderTodos();
   }
 
   // --- タスク移動 ---
   function moveTodo(index, direction) {
     const newIndex = index + direction;
-    if (newIndex < 0 || newIndex >= todos.length) return; // 範囲外チェック
+    if (newIndex < 0 || newIndex >= todos.length) return; //範囲外チェック
     // 配列内で要素を入れ替え
     const [moveTodo] = todos.splice(index, 1);
     todos.splice(newIndex, 0, moveTodo);
