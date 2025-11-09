@@ -1,7 +1,7 @@
 body {
   font-family: sans-serif;
   padding: 20px;
-  font-size: 15pt; 
+  font-size: 15pt;
 }
 ul {
   list-style-type: none;
@@ -13,4 +13,8 @@ li {
 li.done span {
   color: gray;
   text-decoration: line-through;
+}
+li.dragging {
+  opacity: 0.5;
+  background-color: #f0f0f0;
 }

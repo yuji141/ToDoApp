@@ -9,11 +9,11 @@ document.addEventListener('DOMContentLoaded', () => {
   const taskCount = document.querySelector('#taskCount');
   const clearDoneBtn = document.querySelector('#clearDoneBtn');
 
-  // --- 保存／読み込み ---
+  // --- 保存 ---
   function saveTodos() {
     localStorage.setItem('todos', JSON.stringify(todos));
   }
-  //
+  //--- 読み込み ---
   function loadTodos() {
     const saved = localStorage.getItem('todos');
     todos = saved ? JSON.parse(saved) : [];
@@ -44,7 +44,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // キャンセルボタン作成
     const cancelBtn = document.createElement('button');
     cancelBtn.textContent = 'キャンセル';
-    
+
     // 保存処理
     saveBtn.addEventListener('click', () => {
       const newText = inputEl.value.trim();
@@ -52,13 +52,12 @@ document.addEventListener('DOMContentLoaded', () => {
       todos[index].text = newText;
       saveTodos();
       renderTodos();
-      }
-    );
+    });
 
     // Enter キーで保存
     inputEl.addEventListener('keydown', (e) => {
       if (e.key === 'Enter') {
-        save();
+        saveBtn.click();
       }
     });
 
@@ -74,11 +73,11 @@ document.addEventListener('DOMContentLoaded', () => {
       renderTodos(); // 元に戻す
     });
 
-    li.innerHTML = '';// 一旦クリア
+    li.innerHTML = ''; // 一旦クリア
     li.appendChild(inputEl);
     li.appendChild(saveBtn);
     li.appendChild(cancelBtn);
-    inputEl.focus();// 入力欄にフォーカス
+    inputEl.focus(); // 入力欄にフォーカス
   }
 
   // --- 描画（todos -> DOM） ---
@@ -89,12 +88,17 @@ document.addEventListener('DOMContentLoaded', () => {
     // todos 配列を元に描画
     todos.forEach((todo, index) => {
       const li = document.createElement('li');
+      li.setAttribute('draggable', true);
       li.dataset.index = index; // index で一意に特定
+
+      li.addEventListener('dragstart', handleDragStart);
+      li.addEventListener('dragover', handleDragOver);
+      li.addEventListener('drop', handleDrop);
 
       // checkbox
       const checkbox = document.createElement('input');
       checkbox.type = 'checkbox';
-      checkbox.checked = !!todo.done;
+      checkbox.checked = !!todo.done;// done が true のときチェック
       checkbox.addEventListener('change', () => {
         todos[index].done = checkbox.checked;
         saveTodos();
@@ -114,22 +118,76 @@ document.addEventListener('DOMContentLoaded', () => {
       const delBtn = document.createElement('button');
       delBtn.textContent = '削除';
       delBtn.addEventListener('click', () => {
-        todos.splice(index, 1);// 配列から削除
+        todos.splice(index, 1); // 配列から削除
         saveTodos();
         renderTodos();
       });
+
+      // move up button
+      const upBtn = document.createElement('button');
+      upBtn.textContent = '↑';
+      upBtn.addEventListener('click', () => moveTodo(index, -1)); // 上へ移動
+
+      // move down button
+      const downBtn = document.createElement('button');
+      downBtn.textContent = '↓';
+      downBtn.addEventListener('click', () => moveTodo(index, 1)); // 下へ移動
 
       // assemble
       li.appendChild(checkbox);
       li.appendChild(span);
       li.appendChild(editBtn);
       li.appendChild(delBtn);
+      li.appendChild(upBtn);
+      li.appendChild(downBtn);
 
       if (todo.done) doneList.appendChild(li);
       else todoList.appendChild(li);
     });
 
     updateTaskCount();
+  }
+
+  let draggedIndex = null;
+
+  // --- ドラッグ開始時 ---
+  function handleDragStart(e) {
+    draggedIndex = e.target.dataset.index;
+    e.dataTransfer.effectAllowed = 'move';
+    e.target.classList.add('dragging');
+  }
+
+  // --- ドラッグ中(上に重ねたとき) ---
+  function handleDragOver(e) {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
+  }
+
+  //--- ドロップ時 ---
+  function handleDrop(e) {
+    e.preventDefault();
+    e.target.classList.remove('dragging');
+    const targetIndex = e.target.closest('li').dataset.index;
+
+    if (draggedIndex === null || targetIndex === undefined) return;
+
+    //配列の順番を入れ替える
+    const [movedItem] = todos.splice(draggedIndex, 1);
+    todos.splice(targetIndex, 0, movedItem);
+
+    saveTodos();
+    renderTodos();
+  }
+
+  // --- タスク移動 ---
+  function moveTodo(index, direction) {
+    const newIndex = index + direction;
+    if (newIndex < 0 || newIndex >= todos.length) return; //範囲外チェック
+    // 配列内で要素を入れ替え
+    const [todoToMove] = todos.splice(index, 1);
+    todos.splice(newIndex, 0, todoToMove);
+    saveTodos();
+    renderTodos();
   }
 
   // --- タスク追加 ---
@@ -144,14 +202,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // --- 完了タスク一括削除 ---
   function clearDone() {
-    todos = todos.filter(t => !t.done);// done が false のものだけ残す
+    todos = todos.filter((t) => !t.done); // done が false のものだけ残す
     saveTodos();
     renderTodos();
   }
 
   // --- イベント登録 ---
   addBtn.addEventListener('click', addTodo);
-  input.addEventListener('keydown', e => { if (e.key === 'Enter') addTodo(); });
+  input.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') addTodo();
+  });
   clearDoneBtn.addEventListener('click', clearDone);
 
   // --- 初期化 ---
