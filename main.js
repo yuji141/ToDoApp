@@ -154,6 +154,7 @@ document.addEventListener('DOMContentLoaded', () => {
   function handleDragStart(e) {
     draggedIndex = e.target.dataset.index;
     e.dataTransfer.effectAllowed = 'move';
+    e.target.classList.add('dragging');
   }
 
   // --- ドラッグ中(上に重ねたとき) ---
@@ -165,6 +166,7 @@ document.addEventListener('DOMContentLoaded', () => {
   //--- ドロップ時 ---
   function handleDrop(e) {
     e.preventDefault();
+    e.target.classList.remove('dragging');
     const targetIndex = e.target.closest('li').dataset.index;
 
     if (draggedIndex === null || targetIndex === undefined) return;
