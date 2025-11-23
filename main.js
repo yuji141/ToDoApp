@@ -9,6 +9,9 @@ document.addEventListener('DOMContentLoaded', () => {
   const taskCount = document.querySelector('#taskCount');
   const clearDoneBtn = document.querySelector('#clearDoneBtn');
 
+  let draggedIndexTouch = null;
+  let draggedEl = null;
+
   // --- 保存 ---
   function saveTodos() {
     localStorage.setItem('todos', JSON.stringify(todos));
@@ -94,6 +97,9 @@ document.addEventListener('DOMContentLoaded', () => {
       li.addEventListener('dragstart', handleDragStart);
       li.addEventListener('dragover', handleDragOver);
       li.addEventListener('drop', handleDrop);
+      li.addEventListener('touchstart', handleTouchStart, {passive: true});
+      li.addEventListener('touchmove', handleTouchMove, { passive:true});
+      li.addEventListener('touched', handleTouchEnd);
 
       // checkbox
       const checkbox = document.createElement('input');
@@ -188,6 +194,55 @@ document.addEventListener('DOMContentLoaded', () => {
     todos.splice(newIndex, 0, todoToMove);
     saveTodos();
     renderTodos();
+  }
+  
+  function handleTouchStart(e) {
+    draggedEl = e.target.closest('li');
+    if (!draggedEl) return;
+    
+    draggedIndexTouch =Number(draggedEl.dataset.index);
+    draggedEl.classList.add('dragging-touch');
+    
+    //タッチの初期座標
+    draggedEl.startY = e.touches[0].clientY;
+  }
+  function handleTouchMove(e) {
+    if(!draggedEl) return;
+    const touchY =e.touches[0].clientY;
+    
+    draggedEl.style.transform = `translateY(${deltaY}px)`;
+    draggedEl.style.transition = 'none';
+  }
+  
+  function handleTouchEnd(e) {
+    if (!draggedEl) return;
+    
+    //元に戻す
+    draggedEl.style.transform = '';
+    draggedEl.classList.remove('dragging-touch');
+    
+    //ドロップ先を判定
+    const touchY = e.changedTouchs[0].clientY;
+    const elements = [...todoList.children, ...doneList.children];
+    let targetIndex = draggedIndexTouchl
+    
+    for (const el of elements) {
+      const rect = el.getBoundingClientRect();
+      if (touchY > rect.top && touchY < rect.bottom) {
+        targetIndex = Number(el.dataset.index);
+      }
+    }
+    
+    //配列入れ替え
+    if (targetIndex !== draggedIndexTouch) {
+      const [movedItem] = todos.slice(draggedIndexTouch, 1);
+      todos.splice(targetIndex, 0, movedItem);
+      saveTodos();
+      renderTodos();
+    }
+    
+    draggedEl = null;
+    draggedIndexTouch = null;
   }
 
   // --- タスク追加 ---
