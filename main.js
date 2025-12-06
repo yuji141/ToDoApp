@@ -97,9 +97,9 @@ document.addEventListener('DOMContentLoaded', () => {
       li.addEventListener('dragstart', handleDragStart);
       li.addEventListener('dragover', handleDragOver);
       li.addEventListener('drop', handleDrop);
-      li.addEventListener('touchstart', handleTouchStart, {passive: true});
-      li.addEventListener('touchmove', handleTouchMove, { passive:true});
-      li.addEventListener('touched', handleTouchEnd);
+      li.addEventListener('touchstart', handleTouchStart, {passive: false});
+      li.addEventListener('touchmove', handleTouchMove, { passive:false});
+      li.addEventListener('touchend', handleTouchEnd, {passive: false});
 
       // checkbox
       const checkbox = document.createElement('input');
@@ -196,7 +196,9 @@ document.addEventListener('DOMContentLoaded', () => {
     renderTodos();
   }
   
+  //---タッチ＆ドラッグ---
   function handleTouchStart(e) {
+    e.preventDefault();
     draggedEl = e.target.closest('li');
     if (!draggedEl) return;
     
@@ -207,24 +209,28 @@ document.addEventListener('DOMContentLoaded', () => {
     draggedEl.startY = e.touches[0].clientY;
   }
   function handleTouchMove(e) {
+    e.preventDefault();
     if(!draggedEl) return;
     const touchY =e.touches[0].clientY;
+    const deltaY = touchY - draggedEl.startY;
     
     draggedEl.style.transform = `translateY(${deltaY}px)`;
     draggedEl.style.transition = 'none';
-  }
+  } 
   
   function handleTouchEnd(e) {
+    e.preventDefault();
     if (!draggedEl) return;
     
     //元に戻す
     draggedEl.style.transform = '';
+    draggedEl.style.transiton = '';
     draggedEl.classList.remove('dragging-touch');
     
     //ドロップ先を判定
-    const touchY = e.changedTouchs[0].clientY;
+    const touchY = e.changedTouches[0].clientY;
     const elements = [...todoList.children, ...doneList.children];
-    let targetIndex = draggedIndexTouchl
+    let targetIndex = draggedIndexTouch
     
     for (const el of elements) {
       const rect = el.getBoundingClientRect();
@@ -235,7 +241,7 @@ document.addEventListener('DOMContentLoaded', () => {
     
     //配列入れ替え
     if (targetIndex !== draggedIndexTouch) {
-      const [movedItem] = todos.slice(draggedIndexTouch, 1);
+      const [movedItem] = todos.splice(draggedIndexTouch, 1);
       todos.splice(targetIndex, 0, movedItem);
       saveTodos();
       renderTodos();
