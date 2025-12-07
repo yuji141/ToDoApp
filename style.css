@@ -18,3 +18,12 @@ li.dragging {
   opacity: 0.5;
   background-color: #f0f0f0;
 }
+li.dragging-touch {
+  opacity: 0.5;
+  transform: scale(1.05);
+  background-color: #f0f0f0;
+}
+li {
+  user-select: none;
+  -webkit-user-select: none;
+}
