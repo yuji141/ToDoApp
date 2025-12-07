@@ -97,14 +97,14 @@ document.addEventListener('DOMContentLoaded', () => {
       li.addEventListener('dragstart', handleDragStart);
       li.addEventListener('dragover', handleDragOver);
       li.addEventListener('drop', handleDrop);
-      li.addEventListener('touchstart', handleTouchStart, {passive: false});
-      li.addEventListener('touchmove', handleTouchMove, { passive:false});
-      li.addEventListener('touchend', handleTouchEnd, {passive: false});
+      li.addEventListener('touchstart', handleTouchStart, { passive: false });
+      li.addEventListener('touchmove', handleTouchMove, { passive: false });
+      li.addEventListener('touchend', handleTouchEnd, { passive: false });
 
       // checkbox
       const checkbox = document.createElement('input');
       checkbox.type = 'checkbox';
-      checkbox.checked = !!todo.done;// done が true のときチェック
+      checkbox.checked = !!todo.done; // done が true のときチェック
       checkbox.addEventListener('change', () => {
         todos[index].done = checkbox.checked;
         saveTodos();
@@ -195,50 +195,51 @@ document.addEventListener('DOMContentLoaded', () => {
     saveTodos();
     renderTodos();
   }
-  
+
   //---タッチ＆ドラッグ---
   function handleTouchStart(e) {
     e.preventDefault();
     draggedEl = e.target.closest('li');
     if (!draggedEl) return;
-    
-    draggedIndexTouch =Number(draggedEl.dataset.index);
+
+    draggedIndexTouch = Number(draggedEl.dataset.index);
     draggedEl.classList.add('dragging-touch');
-    
-    //タッチの初期座標
+
+    //タッチの初期座標sit
     draggedEl.startY = e.touches[0].clientY;
   }
   function handleTouchMove(e) {
     e.preventDefault();
-    if(!draggedEl) return;
-    const touchY =e.touches[0].clientY;
+    if (!draggedEl) return;
+    const touchY = e.touches[0].clientY;
     const deltaY = touchY - draggedEl.startY;
-    
+
     draggedEl.style.transform = `translateY(${deltaY}px)`;
     draggedEl.style.transition = 'none';
-  } 
-  
+  }
+
   function handleTouchEnd(e) {
     e.preventDefault();
     if (!draggedEl) return;
-    
+
     //元に戻す
     draggedEl.style.transform = '';
-    draggedEl.style.transiton = '';
+    draggedEl.style.transition = '';
     draggedEl.classList.remove('dragging-touch');
-    
+
     //ドロップ先を判定
     const touchY = e.changedTouches[0].clientY;
     const elements = [...todoList.children, ...doneList.children];
-    let targetIndex = draggedIndexTouch
-    
+    let targetIndex = draggedIndexTouch;
+
     for (const el of elements) {
       const rect = el.getBoundingClientRect();
       if (touchY > rect.top && touchY < rect.bottom) {
         targetIndex = Number(el.dataset.index);
+        break;
       }
     }
-    
+
     //配列入れ替え
     if (targetIndex !== draggedIndexTouch) {
       const [movedItem] = todos.splice(draggedIndexTouch, 1);
@@ -246,7 +247,7 @@ document.addEventListener('DOMContentLoaded', () => {
       saveTodos();
       renderTodos();
     }
-    
+
     draggedEl = null;
     draggedIndexTouch = null;
   }
