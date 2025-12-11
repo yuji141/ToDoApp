@@ -209,6 +209,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     //タッチの初期座標sit
     draggedEl.startY = e.touches[0].clientY;
+    
     longPressTimer = setTimeout(() => {
       isLongPress = true;
       draggedEl.classList.add('dragging-touch');
