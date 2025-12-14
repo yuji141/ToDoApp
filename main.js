@@ -232,7 +232,7 @@ document.addEventListener('DOMContentLoaded', () => {
       draggedEl = null;
       return; // 長押しでなければ終了
     }
-    
+
     e.preventDefault();
     if (!draggedEl) return;
 
@@ -264,6 +264,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     draggedEl = null;
     draggedIndexTouch = null;
+    isLongPress = false;// 長押しフラグリセット
   }
 
   // --- タスク追加 ---
