@@ -9,9 +9,10 @@ document.addEventListener('DOMContentLoaded', () => {
   const taskCount = document.querySelector('#taskCount');
   const clearDoneBtn = document.querySelector('#clearDoneBtn');
 
+  // ドラッグ・タッチ関連の変数
+  let draggedIndex = null;
   let draggedIndexTouch = null;
   let draggedEl = null;
-  let draggedIndextouch = null;
   let longPressTimer = null;
   let isLongPress = false;
 
@@ -156,8 +157,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     updateTaskCount();
   }
-
-  let draggedIndex = null;
 
   // --- ドラッグ開始時 ---
   function handleDragStart(e) {
