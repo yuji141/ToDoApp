@@ -218,7 +218,7 @@ document.addEventListener('DOMContentLoaded', () => {
     e.preventDefault();
     if (!draggedEl) return;
     if (!isLongPress) return;
-    
+
     const touchY = e.touches[0].clientY;
     const deltaY = touchY - draggedEl.startY;
 
@@ -227,6 +227,12 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function handleTouchEnd(e) {
+    clearTimeout(longPressTimer);
+    if (!isLongPress) {
+      draggedEl = null;
+      return; // 長押しでなければ終了
+    }
+    
     e.preventDefault();
     if (!draggedEl) return;
 
