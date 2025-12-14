@@ -217,6 +217,8 @@ document.addEventListener('DOMContentLoaded', () => {
   function handleTouchMove(e) {
     e.preventDefault();
     if (!draggedEl) return;
+    if (!isLongPress) return;
+    
     const touchY = e.touches[0].clientY;
     const deltaY = touchY - draggedEl.startY;
 
