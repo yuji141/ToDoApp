@@ -9,8 +9,12 @@ document.addEventListener('DOMContentLoaded', () => {
   const taskCount = document.querySelector('#taskCount');
   const clearDoneBtn = document.querySelector('#clearDoneBtn');
 
+  // ドラッグ・タッチ関連の変数
+  let draggedIndex = null;
   let draggedIndexTouch = null;
   let draggedEl = null;
+  let longPressTimer = null;
+  let isLongPress = false;
 
   // --- 保存 ---
   function saveTodos() {
@@ -154,8 +158,6 @@ document.addEventListener('DOMContentLoaded', () => {
     updateTaskCount();
   }
 
-  let draggedIndex = null;
-
   // --- ドラッグ開始時 ---
   function handleDragStart(e) {
     draggedIndex = e.target.dataset.index;
@@ -203,14 +205,20 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!draggedEl) return;
 
     draggedIndexTouch = Number(draggedEl.dataset.index);
-    draggedEl.classList.add('dragging-touch');
 
     //タッチの初期座標sit
     draggedEl.startY = e.touches[0].clientY;
+    
+    longPressTimer = setTimeout(() => {
+      isLongPress = true;
+      draggedEl.classList.add('dragging-touch');
+    }, 250);
   }
   function handleTouchMove(e) {
     e.preventDefault();
     if (!draggedEl) return;
+    if (!isLongPress) return;
+
     const touchY = e.touches[0].clientY;
     const deltaY = touchY - draggedEl.startY;
 
@@ -219,6 +227,12 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function handleTouchEnd(e) {
+    clearTimeout(longPressTimer);
+    if (!isLongPress) {
+      draggedEl = null;
+      return; // 長押しでなければ終了
+    }
+
     e.preventDefault();
     if (!draggedEl) return;
 
@@ -250,6 +264,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     draggedEl = null;
     draggedIndexTouch = null;
+    isLongPress = false;// 長押しフラグリセット
   }
 
   // --- タスク追加 ---
