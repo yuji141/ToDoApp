@@ -13,8 +13,8 @@ document.addEventListener('DOMContentLoaded', () => {
   let draggedIndex = null;
   let draggedIndexTouch = null;
   let draggedEl = null;
-  let longPressTimer = null;
-  let isLongPress = false;
+  let isDraggingTouch = false;
+  const dragThreshold = 10;
 
   // --- 保存 ---
   function saveTodos() {
@@ -205,7 +205,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!draggedEl) return;
 
     draggedIndexTouch = Number(draggedEl.dataset.index);
-
+    isDraggingTouch = false;
     //タッチの初期座標sit
     draggedEl.startY = e.touches[0].clientY;
     
