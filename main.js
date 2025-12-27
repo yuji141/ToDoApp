@@ -200,13 +200,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
   //---タッチ＆ドラッグ---
   function handleTouchStart(e) {
-    e.preventDefault();
     draggedEl = e.target.closest('li');
     if (!draggedEl) return;
 
     draggedIndexTouch = Number(draggedEl.dataset.index);
+    isLongPress = false;
     isDraggingTouch = false;
-    //タッチの初期座標sit
     draggedEl.startY = e.touches[0].clientY;
     
     longPressTimer = setTimeout(() => {
@@ -215,13 +214,24 @@ document.addEventListener('DOMContentLoaded', () => {
     }, 250);
   }
   function handleTouchMove(e) {
-    e.preventDefault();
     if (!draggedEl) return;
-    if (!isLongPress) return;
-
+    
     const touchY = e.touches[0].clientY;
     const deltaY = touchY - draggedEl.startY;
+    const moveDistance = Math.abs(deltaY);// 移動距離の絶対値
+    
+    // しきい値チェック
+    if (!isDraggingTouch && moveDistance < dragThreshold) {
+      return; // 一定距離移動するまでドラッグ開始しない
+    }
+    // しきい値を超えた瞬間ドラッグ開始
+    if (!isDraggingTouch) {
+      isDraggingTouch = true;
+      draggedEl.classList.add('dragging-touch');
+    }
 
+    e.preventDefault();
+    // ドラッグ中のみ要素を移動
     draggedEl.style.transform = `translateY(${deltaY}px)`;
     draggedEl.style.transition = 'none';
   }
