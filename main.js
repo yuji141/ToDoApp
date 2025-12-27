@@ -207,7 +207,7 @@ document.addEventListener('DOMContentLoaded', () => {
     isLongPress = false;
     isDraggingTouch = false;
     draggedEl.startY = e.touches[0].clientY;
-    
+
     longPressTimer = setTimeout(() => {
       isLongPress = true;
       draggedEl.classList.add('dragging-touch');
@@ -215,11 +215,11 @@ document.addEventListener('DOMContentLoaded', () => {
   }
   function handleTouchMove(e) {
     if (!draggedEl) return;
-    
+
     const touchY = e.touches[0].clientY;
     const deltaY = touchY - draggedEl.startY;
-    const moveDistance = Math.abs(deltaY);// 移動距離の絶対値
-    
+    const moveDistance = Math.abs(deltaY); // 移動距離の絶対値
+
     // しきい値チェック
     if (!isDraggingTouch && moveDistance < dragThreshold) {
       return; // 一定距離移動するまでドラッグ開始しない
@@ -238,9 +238,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function handleTouchEnd(e) {
     clearTimeout(longPressTimer);
+    // 長押しでなければ終了
     if (!isLongPress) {
       draggedEl = null;
-      return; // 長押しでなければ終了
+      draggedIndexTouch = null;
+      isDraggingTouch = false;
+      isLongPress = false;
+      return;
     }
 
     e.preventDefault();
@@ -271,10 +275,11 @@ document.addEventListener('DOMContentLoaded', () => {
       saveTodos();
       renderTodos();
     }
-
+    //状態リセット
     draggedEl = null;
     draggedIndexTouch = null;
-    isLongPress = false;// 長押しフラグリセット
+    isDraggingTouch = false;
+    isLongPress = false;
   }
 
   // --- タスク追加 ---
