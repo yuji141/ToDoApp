@@ -13,8 +13,8 @@ document.addEventListener('DOMContentLoaded', () => {
   let draggedIndex = null;
   let draggedIndexTouch = null;
   let draggedEl = null;
-  let longPressTimer = null;
-  let isLongPress = false;
+  let isDraggingTouch = false;
+  const dragThreshold = 10;
 
   // --- 保存 ---
   function saveTodos() {
@@ -200,37 +200,51 @@ document.addEventListener('DOMContentLoaded', () => {
 
   //---タッチ＆ドラッグ---
   function handleTouchStart(e) {
-    e.preventDefault();
     draggedEl = e.target.closest('li');
     if (!draggedEl) return;
 
     draggedIndexTouch = Number(draggedEl.dataset.index);
-
-    //タッチの初期座標sit
+    isLongPress = false;
+    isDraggingTouch = false;
     draggedEl.startY = e.touches[0].clientY;
-    
+
     longPressTimer = setTimeout(() => {
       isLongPress = true;
       draggedEl.classList.add('dragging-touch');
     }, 250);
   }
   function handleTouchMove(e) {
-    e.preventDefault();
     if (!draggedEl) return;
-    if (!isLongPress) return;
 
     const touchY = e.touches[0].clientY;
     const deltaY = touchY - draggedEl.startY;
+    const moveDistance = Math.abs(deltaY); // 移動距離の絶対値
 
+    // しきい値チェック
+    if (!isDraggingTouch && moveDistance < dragThreshold) {
+      return; // 一定距離移動するまでドラッグ開始しない
+    }
+    // しきい値を超えた瞬間ドラッグ開始
+    if (!isDraggingTouch) {
+      isDraggingTouch = true;
+      draggedEl.classList.add('dragging-touch');
+    }
+
+    e.preventDefault();
+    // ドラッグ中のみ要素を移動
     draggedEl.style.transform = `translateY(${deltaY}px)`;
     draggedEl.style.transition = 'none';
   }
 
   function handleTouchEnd(e) {
     clearTimeout(longPressTimer);
+    // 長押しでなければ終了
     if (!isLongPress) {
       draggedEl = null;
-      return; // 長押しでなければ終了
+      draggedIndexTouch = null;
+      isDraggingTouch = false;
+      isLongPress = false;
+      return;
     }
 
     e.preventDefault();
@@ -261,10 +275,11 @@ document.addEventListener('DOMContentLoaded', () => {
       saveTodos();
       renderTodos();
     }
-
+    //状態リセット
     draggedEl = null;
     draggedIndexTouch = null;
-    isLongPress = false;// 長押しフラグリセット
+    isDraggingTouch = false;
+    isLongPress = false;
   }
 
   // --- タスク追加 ---
