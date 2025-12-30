@@ -36,4 +36,9 @@ PCではマウス操作に適したドラッグ＆ドロップを採用し、
 
 ## 使用技術
 
+- HTML
+- CSS
+- JavaScript(Vanilla JS)
+- localStorage
+
 ## 今後の改善点
