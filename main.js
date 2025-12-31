@@ -210,7 +210,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     longPressTimer = setTimeout(() => {
       isLongPress = true;
-      draggedEl.classList.add('dragging-touch');
+      // draggedEl.classList.add('dragging-touch');
     }, 250);
   }
   function handleTouchMove(e) {
@@ -224,8 +224,11 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!isDraggingTouch && moveDistance < dragThreshold) {
       return; // 一定距離移動するまでドラッグ開始しない
     }
+
     // しきい値を超えた瞬間ドラッグ開始
     if (!isDraggingTouch) {
+      if (!isLongPress) return; // 長押しでなければドラッグ開始しない
+      if (moveDistance < dragThreshold) return;
       isDraggingTouch = true;
       draggedEl.classList.add('dragging-touch');
     }
