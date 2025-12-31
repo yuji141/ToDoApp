@@ -26,4 +26,8 @@ li.dragging-touch {
 li {
   user-select: none;
   -webkit-user-select: none;
+  touch-action: pan-y;
+}
+li.dragging-touch {
+  touch-action: none;
 }
