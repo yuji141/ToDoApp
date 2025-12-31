@@ -14,6 +14,8 @@ document.addEventListener('DOMContentLoaded', () => {
   let draggedIndexTouch = null;
   let draggedEl = null;
   let isDraggingTouch = false;
+  let longPressTimer = null;
+  let isLongPress = false;
   const dragThreshold = 10;
 
   // --- 保存 ---

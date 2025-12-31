@@ -28,6 +28,8 @@ li {
   -webkit-user-select: none;
   touch-action: pan-y;
 }
-li.dragging-touch {
+
+#todoList li,
+#doneList li {
   touch-action: none;
 }
