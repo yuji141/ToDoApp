@@ -158,6 +158,12 @@ document.addEventListener('DOMContentLoaded', () => {
     updateTaskCount();
   }
 
+  document.addEventListener('touchmove', (e) => {
+    if (isDraggingTouch) {
+      e.preventDefault();
+    }
+  }, { passive: false });
+
   // --- ドラッグ開始時 ---
   function handleDragStart(e) {
     draggedIndex = e.target.dataset.index;
@@ -210,7 +216,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     longPressTimer = setTimeout(() => {
       isLongPress = true;
-      // draggedEl.classList.add('dragging-touch');
     }, 250);
   }
   function handleTouchMove(e) {
