@@ -123,12 +123,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
       // edit
       const editBtn = document.createElement('button');
-      editBtn.textContent = '編集';
+      editBtn.textContent = '📝';
       editBtn.addEventListener('click', () => enterEditMode(index));
 
       // delete
       const delBtn = document.createElement('button');
-      delBtn.textContent = '削除';
+      delBtn.textContent = '🗑️';
       delBtn.addEventListener('click', () => {
         todos.splice(index, 1); // 配列から削除
         saveTodos();
@@ -137,12 +137,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
       // move up button
       const upBtn = document.createElement('button');
-      upBtn.textContent = '↑';
+      upBtn.textContent = '▲';
       upBtn.addEventListener('click', () => moveTodo(index, -1)); // 上へ移動
 
       // move down button
       const downBtn = document.createElement('button');
-      downBtn.textContent = '↓';
+      downBtn.textContent = '▼';
       downBtn.addEventListener('click', () => moveTodo(index, 1)); // 下へ移動
 
       // assemble

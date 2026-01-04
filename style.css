@@ -9,6 +9,9 @@ ul {
 }
 li {
   margin-left: 10px;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: pan-y;
 }
 li.done span {
   color: gray;
@@ -22,14 +25,63 @@ li.dragging-touch {
   opacity: 0.5;
   transform: scale(1.05);
   background-color: #f0f0f0;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
-li {
-  user-select: none;
-  -webkit-user-select: none;
-  touch-action: pan-y;
+#todoList,
+#doneList {
+  list-style: none;
+  padding: 0;
+  margin: 16px 0;
 }
 
 #todoList li,
 #doneList li {
   touch-action: none;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+  margin-bottom: 8px;
+  background: #ffffff;
+  border-radius: 6px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+}
+#todoList li button,
+#doneList li button {
+  padding: 4px 6px;
+  font-size: 12px;
+  border: none;
+  border-radius: 4px;
+  background: transparent;
+}
+#todoList li button:hover,
+#doneList li button:hover {
+  background: #dcdcdc;
+  cursor: pointer;
+}
+#doneList li {
+  opacity: 0.6;
+}
+#doneList li span {
+  text-decoration: line-through;
+  color: #777;
+}
+
+@media ( prefers-color-scheme: dark) {
+  body {
+    background: #121212;
+    color: #e0e0e0;
+  }
+  #todoList li,
+  #doneList li {
+    background: #1e1e1e;
+    box-shadow: none;
+  }
+  #doneList li span {
+    color: #999;
+  }
+  #todoList li button,
+  #doneList li button {
+    color: #e0e0e0;
+  }
 }
