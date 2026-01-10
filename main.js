@@ -99,6 +99,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const li = document.createElement('li');
       li.setAttribute('draggable', true);
       li.dataset.index = index; // index で一意に特定
+      li.tabIndex = 0;
 
       li.addEventListener('dragstart', handleDragStart);
       li.addEventListener('dragover', handleDragOver);
@@ -106,11 +107,20 @@ document.addEventListener('DOMContentLoaded', () => {
       li.addEventListener('touchstart', handleTouchStart, { passive: false });
       li.addEventListener('touchmove', handleTouchMove, { passive: false });
       li.addEventListener('touchend', handleTouchEnd, { passive: false });
+      li.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+          startEditTodo(index, li);  
+        }
+        if (e.key === 'Escape') {
+          cancelEditTodo(li);
+        }
+      });
 
       // checkbox
       const checkbox = document.createElement('input');
       checkbox.type = 'checkbox';
       checkbox.checked = !!todo.done; // done が true のときチェック
+      checkbox.tabIndex = -1;
       checkbox.addEventListener('change', () => {
         todos[index].done = checkbox.checked;
         saveTodos();
@@ -129,6 +139,7 @@ document.addEventListener('DOMContentLoaded', () => {
       // delete
       const delBtn = document.createElement('button');
       delBtn.textContent = '🗑️';
+      delBtn.tabIndex = -1;
       delBtn.addEventListener('click', () => {
         todos.splice(index, 1); // 配列から削除
         saveTodos();
@@ -307,6 +318,31 @@ document.addEventListener('DOMContentLoaded', () => {
     todos = todos.filter((t) => !t.done); // done が false のものだけ残す
     saveTodos();
     renderTodos();
+  }
+  
+  function  atartEditTodo(index, li) {
+    const span = li.querySelector('.todo-text');
+    if(!span) return;
+    
+    const input = document.createElement('input');
+    input.type = 'text';
+    input.value = span.textContent;
+    input.className = 'edit-input';
+    
+    li.replaceChild(input, span);
+    input.focus();
+    
+    input.addEventListener('keydown',(e) => {
+      if(e.key === 'Enter'){
+        todos[index].text = input.value.trim();
+        saveTodo();
+        renderTodos();
+      }
+      
+      if (e.key === 'Escape') {
+        renderTodos();
+      }
+    });
   }
 
   // --- イベント登録 ---

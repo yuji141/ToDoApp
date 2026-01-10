@@ -13,6 +13,10 @@ li {
   -webkit-user-select: none;
   touch-action: pan-y;
 }
+li:focus {
+  outline: 2px solid #4a90e2;
+  outline-offset: 2px;
+}
 li.done span {
   color: gray;
   text-decoration: line-through;
@@ -84,4 +88,9 @@ li.dragging-touch {
   #doneList li button {
     color: #e0e0e0;
   }
+}
+todoList li:focus,
+doneList li:focus {
+  outline: 2px solid #4a90e2;
+  ooutline-offset: 2px;
 }
