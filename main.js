@@ -109,7 +109,7 @@ document.addEventListener('DOMContentLoaded', () => {
       li.addEventListener('touchend', handleTouchEnd, { passive: false });
       li.addEventListener('keydown', (e) => {
         if (e.key === 'Enter') {
-          startEditTodo(index, li);  
+          startEditTodo(index, li);
         }
         if (e.key === 'Escape') {
           cancelEditTodo(li);
@@ -141,6 +141,9 @@ document.addEventListener('DOMContentLoaded', () => {
       delBtn.textContent = '🗑️';
       delBtn.tabIndex = -1;
       delBtn.addEventListener('click', () => {
+        const isConfirmed = confirm('本当に削除しますか？');
+        if (!isConfirmed) return;
+
         todos.splice(index, 1); // 配列から削除
         saveTodos();
         renderTodos();
@@ -171,11 +174,15 @@ document.addEventListener('DOMContentLoaded', () => {
     updateTaskCount();
   }
 
-  document.addEventListener('touchmove', (e) => {
-    if (isDraggingTouch) {
-      e.preventDefault();
-    }
-  }, { passive: false });
+  document.addEventListener(
+    'touchmove',
+    (e) => {
+      if (isDraggingTouch) {
+        e.preventDefault();
+      }
+    },
+    { passive: false }
+  );
 
   // --- ドラッグ開始時 ---
   function handleDragStart(e) {
@@ -319,26 +326,26 @@ document.addEventListener('DOMContentLoaded', () => {
     saveTodos();
     renderTodos();
   }
-  
-  function  atartEditTodo(index, li) {
+
+  function startEditTodo(index, li) {
     const span = li.querySelector('.todo-text');
-    if(!span) return;
-    
+    if (!span) return;
+
     const input = document.createElement('input');
     input.type = 'text';
     input.value = span.textContent;
     input.className = 'edit-input';
-    
+
     li.replaceChild(input, span);
     input.focus();
-    
-    input.addEventListener('keydown',(e) => {
-      if(e.key === 'Enter'){
+
+    input.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
         todos[index].text = input.value.trim();
         saveTodo();
         renderTodos();
       }
-      
+
       if (e.key === 'Escape') {
         renderTodos();
       }
