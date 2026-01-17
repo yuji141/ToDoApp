@@ -8,6 +8,10 @@ document.addEventListener('DOMContentLoaded', () => {
   const doneList = document.querySelector('#doneList');
   const taskCount = document.querySelector('#taskCount');
   const clearDoneBtn = document.querySelector('#clearDoneBtn');
+  const dragThreshold = 10;
+  const deleteModal = document.getElementById('deleteModal');
+  const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
+  const cancelDeleteBtn = document.getElementById('cancelDeleteBtn');
 
   // ドラッグ・タッチ関連の変数
   let draggedIndex = null;
@@ -16,7 +20,7 @@ document.addEventListener('DOMContentLoaded', () => {
   let isDraggingTouch = false;
   let longPressTimer = null;
   let isLongPress = false;
-  const dragThreshold = 10;
+  let deleteTargetIndex = null;
 
   // --- 保存 ---
   function saveTodos() {
@@ -141,12 +145,8 @@ document.addEventListener('DOMContentLoaded', () => {
       delBtn.textContent = '🗑️';
       delBtn.tabIndex = -1;
       delBtn.addEventListener('click', () => {
-        const isConfirmed = confirm('本当に削除しますか？');
-        if (!isConfirmed) return;
-
-        todos.splice(index, 1); // 配列から削除
-        saveTodos();
-        renderTodos();
+        deleteTargetIndex = index; // 削除対象のインデックスを保存
+        deleteModal.classList.remove('hidden'); // モーダル表示
       });
 
       // move up button
@@ -358,6 +358,22 @@ document.addEventListener('DOMContentLoaded', () => {
     if (e.key === 'Enter') addTodo();
   });
   clearDoneBtn.addEventListener('click', clearDone);
+
+  cancelDeleteBtn.addEventListener('click', () => {
+    deleteModal.classList.add('hidden'); // モーダル非表示
+    deleteTargetIndex = null; // 削除対象インデックスをリセット
+  });
+
+  confirmDeleteBtn.addEventListener('click', () => {
+    if (deleteTargetIndex === null) return;
+
+    todos.splice(deleteTargetIndex, 1); // 配列から削除
+    saveTodos();
+    renderTodos();
+
+    deleteModal.classList.add('hidden'); // モーダル非表示
+    deleteTargetIndex = null; // 削除対象インデックスをリセット
+  });
 
   // --- 初期化 ---
   loadTodos();
