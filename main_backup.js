@@ -1,3 +1,5 @@
+let todos = []; // ToDo アイテムの配列
+
 document.addEventListener('DOMContentLoaded', () => {
   // --- 要素取得 ---
   const input = document.querySelector('#todoInput');
@@ -7,6 +9,10 @@ document.addEventListener('DOMContentLoaded', () => {
   const taskCount = document.querySelector('#taskCount');
   const clearDoneBtn = document.querySelector('#clearDoneBtn');
   const dragThreshold = 10;
+  const deleteModal = document.getElementById('deleteModal');
+  const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
+  const cancelDeleteBtn = document.getElementById('cancelDeleteBtn');
+  const deleteMessage = document.getElementById('deleteMessage');
 
   // ドラッグ・タッチ関連の変数
   let draggedIndex = null;
@@ -15,6 +21,18 @@ document.addEventListener('DOMContentLoaded', () => {
   let isDraggingTouch = false;
   let longPressTimer = null;
   let isLongPress = false;
+  let deleteTargetIndex = null;
+  let deleteTargetText = '';
+
+  // --- 保存 ---
+  function saveTodos() {
+    localStorage.setItem('todos', JSON.stringify(todos));
+  }
+  //--- 読み込み ---
+  function loadTodos() {
+    const saved = localStorage.getItem('todos');
+    todos = saved ? JSON.parse(saved) : [];
+  }
 
   // --- タスク数更新 ---
   function updateTaskCount() {
@@ -129,7 +147,10 @@ document.addEventListener('DOMContentLoaded', () => {
       delBtn.textContent = '🗑️';
       delBtn.tabIndex = -1;
       delBtn.addEventListener('click', () => {
-        openDeleteModal(index, todo.text);
+        deleteTargetIndex = index; // 削除対象のインデックスを保存
+        deleteTargetText = todos[index].text; // 削除対象のテキストを保存
+        deleteMessage.textContent = `「${deleteTargetText}」を削除しますか？`; // メッセージ更新
+        deleteModal.classList.remove('hidden'); // モーダル表示
       });
 
       // move up button
@@ -335,6 +356,12 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+  function closeDeleteModal() {
+    deleteModal.classList.add('hidden'); // モーダル非表示
+    deleteTargetIndex = null; // 削除対象インデックスをリセット
+    deleteTargetText = '';
+  }
+
   // --- イベント登録 ---
   addBtn.addEventListener('click', addTodo);
   input.addEventListener('keydown', (e) => {
@@ -342,13 +369,31 @@ document.addEventListener('DOMContentLoaded', () => {
   });
   clearDoneBtn.addEventListener('click', clearDone);
 
-  todos.splice(deleteTargetIndex, 1); // 配列から削除
-  saveTodos();
+  cancelDeleteBtn.addEventListener('click', closeDeleteModal);
+
+  confirmDeleteBtn.addEventListener('click', () => {
+    if (deleteTargetIndex === null) return;
+
+    todos.splice(deleteTargetIndex, 1); // 配列から削除
+    saveTodos();
+    renderTodos();
+
+    closeDeleteModal();
+  });
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && !deleteModal.classList.contains('hidden')) {
+      closeDeleteModal();
+    }
+  });
+
+  deleteModal.addEventListener('click', (e) => {
+    if (e.target === deleteModal) {
+      closeDeleteModal();
+    }
+  });
+
+  // --- 初期化 ---
+  loadTodos();
   renderTodos();
-
-  closeDeleteModal();
 });
-
-// --- 初期化 ---
-loadTodos();
-renderTodos();
