@@ -6,6 +6,7 @@ const deleteMessage = document.getElementById('deleteMessage');
 let deleteTargetIndex = null;
 let deleteTargetText = '';
 
+// モーダルを開く関数
 function openDeleteModal(index, text) {
   deleteTargetIndex = index; // 削除対象のインデックスを保存
   deleteTargetText = text; // 削除対象のテキストを保存
@@ -18,6 +19,13 @@ function closeDeleteModal() {
   deleteModal.classList.add('hidden'); // モーダル非表示
   deleteTargetIndex = null; // 削除対象インデックスをリセット
   deleteTargetText = '';
+}
+
+// --- ToDo アイテムの削除 ---
+function deleteTodoByIndex(index) {
+  todos.splice(index, 1); // 配列から削除
+  saveTodos();
+  renderTodos();
 }
 
 // キャンセルボタンのイベントリスナー
@@ -44,3 +52,4 @@ deleteModal.addEventListener('click', (e) => {
     closeDeleteModal();
   }
 });
+
