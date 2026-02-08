@@ -1,12 +1,12 @@
-
+import { getTodos, saveTodos } from './state.js';
 
 const deleteModal = document.getElementById('deleteModal');
-const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
 const cancelDeleteBtn = document.getElementById('cancelDeleteBtn');
 const deleteMessage = document.getElementById('deleteMessage');
 
 let deleteTargetIndex = null;
 let deleteTargetText = '';
+let onconfirmDelete = null;
 
 // モーダルを開く関数
 export function openDeleteModal(index, text) {
@@ -30,28 +30,38 @@ export function deleteTodoByIndex(index) {
   saveTodos();
 }
 
+export function setOnConfirmDelete(callback) {
+  onconfirmDelete = callback;
+}
+
 // キャンセルボタンのイベントリスナー
 cancelDeleteBtn.addEventListener('click', closeDeleteModal);
 
 // 確認ボタンのイベントリスナー
-confirmDeleteBtn.addEventListener('click', () => {
-  if (deleteTargetIndex === null) return;
+document.addEventListener('DOMContentLoaded', () => {
+  const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
 
-  deleteTodoByIndex(deleteTargetIndex);
-  closeDeleteModal();
-});
+  confirmDeleteBtn.addEventListener('click', () => {
+    console.log('【modal】削除ボタンが押された');
+    if (deleteTargetIndex === null) return;
 
-// Escapeキーでモーダルを閉じる
-document.addEventListener('keydown', (e) => {
-  if (e.key === 'Escape' && !deleteModal.classList.contains('hidden')) {
+    if (onconfirmDelete) {
+      onconfirmDelete(deleteTargetIndex);
+    }
     closeDeleteModal();
-  }
-});
+  });
 
-// モーダルの背景クリックで閉じる
-deleteModal.addEventListener('click', (e) => {
-  if (e.target === deleteModal) {
-    closeDeleteModal();
-  }
-});
+  // Escapeキーでモーダルを閉じる
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && !deleteModal.classList.contains('hidden')) {
+      closeDeleteModal();
+    }
+  });
 
+  // モーダルの背景クリックで閉じる
+  deleteModal.addEventListener('click', (e) => {
+    if (e.target === deleteModal) {
+      closeDeleteModal();
+    }
+  });
+});

@@ -48,3 +48,8 @@ export function clearDoneTodos() {
   saveTodos(filtered);
   if (onChange) onChange();
 }
+
+export function updateTodoText(index, newText) {
+  todos[index].text = newText;
+  saveTodos();
+}

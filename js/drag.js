@@ -1,3 +1,5 @@
+import { getTodos, saveTodos } from './state.js';
+
 let onReorder = null;
 
 // ドラッグ中のインデックス
@@ -37,13 +39,13 @@ export function handleDrop(e) {
 
 // --- タスク移動 ---
 export function moveTodo(index, direction) {
+  const todos = getTodos();
   const newIndex = index + direction;
   if (newIndex < 0 || newIndex >= todos.length) return; //範囲外チェック
   // 配列内で要素を入れ替え
   const [todoToMove] = todos.splice(index, 1);
   todos.splice(newIndex, 0, todoToMove);
   saveTodos();
-  renderTodos();
 }
 
 //---タッチ＆ドラッグ---

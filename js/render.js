@@ -1,6 +1,7 @@
-import { getTodos, toggleTodoDone } from './state.js';
+import { deleteTodoIndex, getTodos, toggleTodoDone } from './state.js';
 import { handleDragStart, handleDragOver, handleDrop, handleTouchEnd, handleTouchMove, handleTouchStart, moveTodo } from './drag.js';
 import { openDeleteModal, closeDeleteModal } from './modal.js';
+import { enterEditMode } from './main.js';
 
 const taskCountEl = document.getElementById('taskCount');
 
@@ -39,6 +40,7 @@ export function renderTodos() {
     checkbox.tabIndex = -1;
     checkbox.addEventListener('change', () => {
       toggleTodoDone(index, checkbox.checked);
+      renderTodos();
     });
 
     // text
@@ -55,18 +57,27 @@ export function renderTodos() {
     delBtn.textContent = '🗑️';
     delBtn.tabIndex = -1;
     delBtn.addEventListener('click', () => {
-      openDeleteModal(index, todo.text);
+      openDeleteModal(index, todo.text, (deleteIndex) => {
+        deleteTodoIndex(deleteIndex);
+        renderTodos();
+      });
     });
 
     // move up button
     const upBtn = document.createElement('button');
     upBtn.textContent = '▲';
-    upBtn.addEventListener('click', () => moveTodo(index, -1)); // 上へ移動
+    upBtn.addEventListener('click', () => {
+      moveTodo(index, -1); // 上へ移動
+      renderTodos();
+    });
 
     // move down button
     const downBtn = document.createElement('button');
     downBtn.textContent = '▼';
-    downBtn.addEventListener('click', () => moveTodo(index, 1)); // 下へ移動
+    downBtn.addEventListener('click', () => {
+      moveTodo(index, 1); // 下へ移動
+      renderTodos();
+    });
 
     // assemble
     li.appendChild(checkbox);
