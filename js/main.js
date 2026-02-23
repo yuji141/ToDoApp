@@ -5,6 +5,8 @@ import { clearDoneTodos } from './state.js';
 import { getTodos, updateTodoText } from './state.js';
 import { openDeleteModal, setOnConfirmDelete } from './modal.js';
 import { deleteTodoByIndex } from './modal.js';
+import { reorderTodo} from './state.js';
+import { setupDragAndDrop} from './drag.js';
 
 // --- 編集モードへ（index は todos の index） ---
 export function enterEditMode(index) {
@@ -74,25 +76,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const clearDoneBtn = document.querySelector('#clearDoneBtn');
   const dragThreshold = 10;
   const todoForm = document.getElementById('todoForm');
-
-  // ドラッグ・タッチ関連の変数
-  let draggedIndex = null;
-  let draggedIndexTouch = null;
-  let draggedEl = null;
-  let isDraggingTouch = false;
-  let longPressTimer = null;
-  let isLongPress = false;
-
-  document.addEventListener(
-    'touchmove',
-    (e) => {
-      if (isDraggingTouch) {
-        e.preventDefault();
-      }
-    },
-    { passive: false },
-  );
-
+  
   // --- タスク追加 ---
   function handleAddTodo() {
     const text = input.value.trim();
@@ -107,35 +91,11 @@ document.addEventListener('DOMContentLoaded', () => {
     deleteTodoByIndex(index);
     renderTodos();
   });
-
-  // function startEditTodo(index, li) {
-  //   const span = li.querySelector('.todo-text');
-  //   if (!span) return;
-
-  //   const text = span.textContent;
-
-  //   const input = document.createElement('input');
-  //   input.type = 'text';
-  //   input.value = span.textContent;
-  //   input.className = 'edit-input';
-
-  //   li.replaceChild(input, span);
-  //   input.focus();
-
-  //   input.addEventListener('keydown', (e) => {
-  //     if (e.key === 'Enter') {
-  //       saveTodo();
-  //       renderTodos();
-  //     }
-
-  //     if (e.key === 'Escape') {
-  //       renderTodos();
-  //     }
-  //   });
-
-  //   // --- タスク削除 ---
-  //   openDeleteModal(index, text);
-  // }
+  
+  function updateTodoOrder(fromIndex, toIndex) {
+    reorderTodo(fromIndex, toIndex);
+    renderTodos();
+  }
 
   //追加ボタン・Enterキーでタスク追加
   todoForm.addEventListener('submit', (e) => {
@@ -146,6 +106,8 @@ document.addEventListener('DOMContentLoaded', () => {
   clearDoneBtn.addEventListener('click', () => {
     clearDoneTodos();
   });
+  
+  setupDragAndDrop(updateTodoOrder);
 });
 
 // --- 初期化 ---

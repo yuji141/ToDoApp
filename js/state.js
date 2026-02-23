@@ -53,3 +53,10 @@ export function updateTodoText(index, newText) {
   todos[index].text = newText;
   saveTodos();
 }
+
+export function reorderTodo(fromIndex, toIndex) {
+  const todos = getTodos();
+  const [movedItem] = todos.splice(fromIndex, 1);
+  todos.splice(toIndex, 0, movedItem);
+  saveTodos();
+}

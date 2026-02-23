@@ -1,12 +1,18 @@
 import { getTodos, saveTodos } from './state.js';
 
+let draggedIndex = null;
+let draggedIndexTouch = null;
+let draggedEl = null;
+let isDraggingTouch = false;
+let longPressTimer = null;
+let isLongPress = false;
 let onReorder = null;
+let dragThreshold = 5 //ドラッグのしきい値
 
 // ドラッグ中のインデックス
 export function setupDragAndDrop(Callback) {
   onReorder = Callback;
 }
-
 
 // --- ドラッグ開始時 ---
 export function handleDragStart(e) {
@@ -24,16 +30,18 @@ export function handleDragOver(e) {
 //--- ドロップ時 ---
 export function handleDrop(e) {
   e.preventDefault();
-  e.target.classList.remove('dragging');
+  //e.target.classList.remove('dragging');
 
   const targetLi = e.target.closest('li');
   if (!targetLi || draggedIndex === null) return;
   
-  const targetIndex = targetLi.dataset.index;
+  const fromIndex = Number(draggedIndex);
+  const toIndex = Number(targetLi.dataset.index);
   
-  if (onReorder) {
-    onReorder(Number(draggedIndex), Number(targetIndex));
+  if(onReorder) {
+    onReorder(fromIndex, toIndex);
   }
+  console.log('reorder発火', fromIndex, toIndex);
   draggedIndex = null;
 }
 
@@ -124,14 +132,24 @@ export function handleTouchEnd(e) {
 
   //配列入れ替え
   if (targetIndex !== draggedIndexTouch) {
-    const [movedItem] = todos.splice(draggedIndexTouch, 1);
-    todos.splice(targetIndex, 0, movedItem);
-    saveTodos();
-    renderTodos();
+    if(onReorder) {
+      onReorder(draggedIndexTouch, targetIndex);
+    }
   }
+  
   //状態リセット
   draggedEl = null;
   draggedIndexTouch = null;
   isDraggingTouch = false;
   isLongPress = false;
 }
+
+document.addEventListener(
+    'touchmove',
+    (e) => {
+      if (isDraggingTouch) {
+        e.preventDefault();
+      }
+    },
+    { passive: false },
+  );
