@@ -13,6 +13,10 @@ li {
   -webkit-user-select: none;
   touch-action: pan-y;
 }
+li:focus {
+  outline: 2px solid #4a90e2;
+  outline-offset: 2px;
+}
 li.done span {
   color: gray;
   text-decoration: line-through;
@@ -67,7 +71,7 @@ li.dragging-touch {
   color: #777;
 }
 
-@media ( prefers-color-scheme: dark) {
+@media (prefers-color-scheme: dark) {
   body {
     background: #121212;
     color: #e0e0e0;
@@ -84,4 +88,38 @@ li.dragging-touch {
   #doneList li button {
     color: #e0e0e0;
   }
+}
+todoList li:focus,
+doneList li:focus {
+  outline: 2px solid #4a90e2;
+  outline-offset: 2px;
+}
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+.modal-content {
+  background: #fff;
+  padding: 16px;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  max-width: 400px;
+  width: 100%;
+}
+.modal-actions {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  margin-top: 16px;
+}
+.hidden {
+  display: none;
 }

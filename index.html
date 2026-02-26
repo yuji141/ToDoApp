@@ -1,26 +1,39 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ja">
-<head>
-  <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=Edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>ToDoリスト</title>
-  <link rel="stylesheet" href="style.css">
-</head>
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>ToDoリスト</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
 
-<body>
-  <h1>ToDoリスト</h1>
-  <input type="text" id="todoInput" placeholder="やることを入力">
-  <button id="addBtn">追加</button>
-  
-  <h3>未完了タスク</h3>
-  <ul id="todoList"></ul>
-  <p>残りタスク: <span id="taskCount">0</span></p>
-  
-  <h3>完了タスク</h3>
-  <ul id="doneList"></ul>
-  <button id="clearDoneBtn">完了タスクを削除</button>
+  <body>
+    <h1>ToDoリスト</h1>
 
-  <script src="main.js"></script>
-</body>
+    <form id="todoForm">
+      <input type="text" id="todoInput" placeholder="やることを入力" />
+      <button type="submit" id="addBtn">追加</button>
+    </form>
+
+    <h3>未完了タスク</h3>
+    <ul id="todoList"></ul>
+    <p>残りタスク: <span id="taskCount">0</span></p>
+
+    <h3>完了タスク</h3>
+    <ul id="doneList"></ul>
+    <button id="clearDoneBtn">完了タスクを削除</button>
+
+    <div id="deleteModal" class="modal hidden">
+      <div class="modal-content">
+        <p id="deleteMessage">このタスクを削除しますか？</p>
+        <div class="modal-actions">
+          <button id="cancelDeleteBtn">キャンセル</button>
+          <button id="confirmDeleteBtn">削除</button>
+        </div>
+      </div>
+    </div>
+
+    <script type="module" src="js/main.js"></script>
+  </body>
 </html>

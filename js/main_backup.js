@@ -8,6 +8,11 @@ document.addEventListener('DOMContentLoaded', () => {
   const doneList = document.querySelector('#doneList');
   const taskCount = document.querySelector('#taskCount');
   const clearDoneBtn = document.querySelector('#clearDoneBtn');
+  const dragThreshold = 10;
+  const deleteModal = document.getElementById('deleteModal');
+  const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
+  const cancelDeleteBtn = document.getElementById('cancelDeleteBtn');
+  const deleteMessage = document.getElementById('deleteMessage');
 
   // ドラッグ・タッチ関連の変数
   let draggedIndex = null;
@@ -16,7 +21,8 @@ document.addEventListener('DOMContentLoaded', () => {
   let isDraggingTouch = false;
   let longPressTimer = null;
   let isLongPress = false;
-  const dragThreshold = 10;
+  let deleteTargetIndex = null;
+  let deleteTargetText = '';
 
   // --- 保存 ---
   function saveTodos() {
@@ -99,6 +105,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const li = document.createElement('li');
       li.setAttribute('draggable', true);
       li.dataset.index = index; // index で一意に特定
+      li.tabIndex = 0;
 
       li.addEventListener('dragstart', handleDragStart);
       li.addEventListener('dragover', handleDragOver);
@@ -106,11 +113,20 @@ document.addEventListener('DOMContentLoaded', () => {
       li.addEventListener('touchstart', handleTouchStart, { passive: false });
       li.addEventListener('touchmove', handleTouchMove, { passive: false });
       li.addEventListener('touchend', handleTouchEnd, { passive: false });
+      li.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+          startEditTodo(index, li);
+        }
+        if (e.key === 'Escape') {
+          closeDeleteModal();
+        }
+      });
 
       // checkbox
       const checkbox = document.createElement('input');
       checkbox.type = 'checkbox';
       checkbox.checked = !!todo.done; // done が true のときチェック
+      checkbox.tabIndex = -1;
       checkbox.addEventListener('change', () => {
         todos[index].done = checkbox.checked;
         saveTodos();
@@ -129,10 +145,12 @@ document.addEventListener('DOMContentLoaded', () => {
       // delete
       const delBtn = document.createElement('button');
       delBtn.textContent = '🗑️';
+      delBtn.tabIndex = -1;
       delBtn.addEventListener('click', () => {
-        todos.splice(index, 1); // 配列から削除
-        saveTodos();
-        renderTodos();
+        deleteTargetIndex = index; // 削除対象のインデックスを保存
+        deleteTargetText = todos[index].text; // 削除対象のテキストを保存
+        deleteMessage.textContent = `「${deleteTargetText}」を削除しますか？`; // メッセージ更新
+        deleteModal.classList.remove('hidden'); // モーダル表示
       });
 
       // move up button
@@ -160,11 +178,15 @@ document.addEventListener('DOMContentLoaded', () => {
     updateTaskCount();
   }
 
-  document.addEventListener('touchmove', (e) => {
-    if (isDraggingTouch) {
-      e.preventDefault();
-    }
-  }, { passive: false });
+  document.addEventListener(
+    'touchmove',
+    (e) => {
+      if (isDraggingTouch) {
+        e.preventDefault();
+      }
+    },
+    { passive: false },
+  );
 
   // --- ドラッグ開始時 ---
   function handleDragStart(e) {
@@ -309,12 +331,67 @@ document.addEventListener('DOMContentLoaded', () => {
     renderTodos();
   }
 
+  function startEditTodo(index, li) {
+    const span = li.querySelector('.todo-text');
+    if (!span) return;
+
+    const input = document.createElement('input');
+    input.type = 'text';
+    input.value = span.textContent;
+    input.className = 'edit-input';
+
+    li.replaceChild(input, span);
+    input.focus();
+
+    input.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        todos[index].text = input.value.trim();
+        saveTodo();
+        renderTodos();
+      }
+
+      if (e.key === 'Escape') {
+        renderTodos();
+      }
+    });
+  }
+
+  function closeDeleteModal() {
+    deleteModal.classList.add('hidden'); // モーダル非表示
+    deleteTargetIndex = null; // 削除対象インデックスをリセット
+    deleteTargetText = '';
+  }
+
   // --- イベント登録 ---
   addBtn.addEventListener('click', addTodo);
   input.addEventListener('keydown', (e) => {
     if (e.key === 'Enter') addTodo();
   });
   clearDoneBtn.addEventListener('click', clearDone);
+
+  cancelDeleteBtn.addEventListener('click', closeDeleteModal);
+
+  confirmDeleteBtn.addEventListener('click', () => {
+    if (deleteTargetIndex === null) return;
+
+    todos.splice(deleteTargetIndex, 1); // 配列から削除
+    saveTodos();
+    renderTodos();
+
+    closeDeleteModal();
+  });
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && !deleteModal.classList.contains('hidden')) {
+      closeDeleteModal();
+    }
+  });
+
+  deleteModal.addEventListener('click', (e) => {
+    if (e.target === deleteModal) {
+      closeDeleteModal();
+    }
+  });
 
   // --- 初期化 ---
   loadTodos();
