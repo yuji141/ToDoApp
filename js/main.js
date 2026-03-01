@@ -1,12 +1,12 @@
-import { addTodo } from './state.js';
+import { addTodo, loadTodos } from './state.js';
 import { subscribe } from './state.js';
 import { renderTodos } from './render.js';
 import { clearDoneTodos } from './state.js';
 import { getTodos, updateTodoText } from './state.js';
 import { openDeleteModal, setOnConfirmDelete } from './modal.js';
 import { deleteTodoByIndex } from './modal.js';
-import { reorderTodo} from './state.js';
-import { setupDragAndDrop} from './drag.js';
+import { reorderTodo } from './state.js';
+import { setupDragAndDrop } from './drag.js';
 
 // --- 編集モードへ（index は todos の index） ---
 export function enterEditMode(index) {
@@ -76,7 +76,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const clearDoneBtn = document.querySelector('#clearDoneBtn');
   const dragThreshold = 10;
   const todoForm = document.getElementById('todoForm');
-  
+
   // --- タスク追加 ---
   function handleAddTodo() {
     const text = input.value.trim();
@@ -91,7 +91,7 @@ document.addEventListener('DOMContentLoaded', () => {
     deleteTodoByIndex(index);
     renderTodos();
   });
-  
+
   function updateTodoOrder(fromIndex, toIndex) {
     reorderTodo(fromIndex, toIndex);
     renderTodos();
@@ -102,13 +102,22 @@ document.addEventListener('DOMContentLoaded', () => {
     e.preventDefault();
     handleAddTodo();
   });
+
   //完了タスク一括削除
   clearDoneBtn.addEventListener('click', () => {
     clearDoneTodos();
   });
-  
+
   setupDragAndDrop(updateTodoOrder);
 });
 
 // --- 初期化 ---
+loadTodos();  // ローカルストレージから ToDo を読み込む
+
+// --- 状態変更時の再描画を登録 ---
+subscribe(() => {
+  renderTodos();
+});
+
+// --- 最初の描画 ---
 renderTodos();
