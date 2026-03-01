@@ -42,18 +42,20 @@ export function subscribe(callback) {
   onChange = callback;
 }
 
+// --- 完了済み ToDo を一括削除 ---
 export function clearDoneTodos() {
-  const todos = getTodos();
-  const filtered = todos.filter(todo => !todo.done);
-  saveTodos(filtered);
+  todos = todos.filter((todo) => !todo.done);
+  saveTodos();
   if (onChange) onChange();
 }
 
+// --- ToDo テキストの更新 ---
 export function updateTodoText(index, newText) {
   todos[index].text = newText;
   saveTodos();
 }
 
+// --- ToDo の並び替え ---
 export function reorderTodo(fromIndex, toIndex) {
   const todos = getTodos();
   const [movedItem] = todos.splice(fromIndex, 1);
